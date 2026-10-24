@@ -18,6 +18,11 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/clientes', clienteRoutes);
 app.use('/equipos', equipoRoutes);
 
+import authRoutes from './routes/authRoutes.js';
+
+// ... (en tus app.use)
+app.use('/auth', authRoutes);
+
 // Iniciar servidor
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
