@@ -2,6 +2,7 @@
 import express, { Request, Response } from 'express';
 import clienteRoutes from './routes/clienteRoutes.js';
 import equipoRoutes from './routes/equipoRoutes.js';
+import { errorHandler } from './middlewares/errorHandler.js';
 
 const app = express();
 const PORT = 3000;
@@ -26,4 +27,9 @@ app.use('/auth', authRoutes);
 // Iniciar servidor
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
+
+    // ... (aquí defines tus rutas: app.use('/clientes', clienteRoutes), etc.)
+
+    // REGISTRAR EL MANEJADOR DE ERRORES AL FINAL DE TODO
+    app.use(errorHandler);
 });

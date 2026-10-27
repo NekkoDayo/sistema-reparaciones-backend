@@ -1,26 +1,43 @@
 // src/controllers/clienteController.ts
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import prisma from '../prisma.js';
+import { AppError } from '../utils/AppError.js';
 
-export const crearCliente = async (req: Request, res: Response) => {
+// Obtener todos los clientes
+export const obtenerClientes = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { nombre, telefono, correo } = req.body;
-        const nuevoCliente = await prisma.cliente.create({
-            data: { nombre, telefono, correo },
+        const clientes = await prisma.cliente.findMany({
+            include: { equipos: true }, // Si quieres traer sus equipos asociados
         });
-        res.status(201).json({ mensaje: '¡Cliente creado con éxito!', cliente: nuevoCliente });
+        return res.json(clientes);
     } catch (error) {
-        res.status(400).json({ error: 'No se pudo crear el cliente.', detalle: error });
+        return next(error); // El middleware global se encarga de atraparlo
     }
 };
 
-export const obtenerClientes = async (req: Request, res: Response) => {
+// Crear un cliente nuevo
+export const crearCliente = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const clientes = await prisma.cliente.findMany({
-            include: { equipos: true },
+        const { nombre, telefono, correo } = req.body;
+
+        // Validación opcional de negocio: verificar si el correo ya existe
+        const clienteExistente = await prisma.cliente.findUnique({
+            where: { correo },
         });
-        res.json(clientes);
+
+        if (clienteExistente) {
+            throw new AppError('Ya existe un cliente registrado con este correo electrónico.', 400);
+        }
+
+        const nuevoCliente = await prisma.cliente.create({
+            data: { nombre, telefono, correo },
+        });
+
+        return res.status(201).json({
+            mensaje: '¡Cliente registrado con éxito!',
+            cliente: nuevoCliente,
+        });
     } catch (error) {
-        res.status(500).json({ error: 'Error al obtener clientes.', detalle: error });
+        return next(error); // Si es un AppError o un fallo de Prisma, pasa directo al middleware central
     }
 };
