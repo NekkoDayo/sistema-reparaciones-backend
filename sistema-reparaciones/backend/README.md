@@ -111,5 +111,4 @@ El servidor estará corriendo en `http://localhost:3000`.
 * **Seguridad de Endpoints:** Todas las operaciones críticas requieren un token Bearer válido generado por el módulo de autenticación.
 * **Validación Estricta:** Uso de Zod para rechazar peticiones mal formadas antes de impactar la base de datos.
 
-👨‍💻 Autor
-José Arturo Falcón Flores - Desarrollo Backend - [Github](https://github.com/NekkoDayo)
+👨‍💻 José Arturo Falcón Flores - Desarrollo Backend - [Github](https://github.com/NekkoDayo)
